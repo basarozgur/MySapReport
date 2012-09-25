@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+    <!--<html manifest="app.appcache">-->
+    <head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">     
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    
+    <link rel="shortcut icon" href="images/mysapreport.jpg" />
+
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.css" />        
+
+    <!-- DataTables CSS     -->
+    <link rel="stylesheet" type="text/css" href="css/datatables/jquery.dataTables.css"/>    
+    <link rel="stylesheet" type="text/css" href="css/datatables/ColVisAlt.css"/>
+
+    <script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.js"></script>
+
+    <!-- DataTables -->
+    <script type="text/javascript" src="js/datatables/jquery.dataTables.min.js"></script>                
+    <script type="text/javascript" src="js/datatables/ColVis.min.js"></script>      
+    <script type="text/javascript" src="js/datatables/TableTools.min.js"></script>      
+
+    <script type="text/javascript" src="js/settings.js"></script> 
+    <script type="text/javascript" src="js/table.js"></script>  
+    <script type="text/javascript" src="js/chart.js"></script>     
+
+    <script>
+        $.support.cors = true;
+        jQuery.support.cors = true;                   
+    </script>  
+
+</head>
+
+<body>
+
+
+<div data-role="page" id="alv" data-theme="e">
+    <div data-role="header" data-position="fixed">
+        <h1>ALV</h1>
+        <a href="#settings"  data-role="button" data-icon="gear" data-theme="b">Settings</a>
+    </div>
+    <div data-role="content" >
+        <div data-role="fieldcontain">
+            <label for="transaction">Transaction:</label>
+            <input type="text" name="transaction" id="transaction" value="" />        
+        </div>
+        <div data-role="fieldcontain">
+            <label for="variant">Variant:</label>
+            <input type="text" name="variant" id="variant" value="" />
+        </div>
+        <a href="javascript:getALV()"  data-role="button" data-icon="grid" data-theme="b">Call Report</a>
+        <a href="javascript:getDemoData()"  data-role="button" data-icon="grid" data-theme="b">Demo</a>        
+        <br>
+    </div>
+</div>
+
+
+<div data-role="dialog" id="settings">
+    <div data-role="content" >
+        <label for="connectUrl">Connect to:</label>
+        <input type="url" name="connectUrl" id="connectUrl" value="" data-mini="true" />
+        <label for="username">Username:</label>
+        <input type="text" name="username" id="username" value="" data-mini="true" />
+        <label for="password">Password:</label>
+        <input type="password" name="password" id="password" value="" data-mini="true" />
+        <br>  
+        <a href="javascript:exitSettings()" data-role="button" data-icon="delete">Exit</a> 
+        <a href="javascript:saveSettings()" data-role="button" data-icon="check" data-theme="b">Save</a>                 
+    </div>
+</div>
+
+
+<div data-role="page" id="showDatatable" data-theme="e" data-add-back-btn="true" data-dom-cache="true">
+    <div data-role="header" data-position="fixed">
+        <h1 id="datatableHeader">ALV</h1>
+        <div class="ui-btn-right">            
+            <a href="#chartRules" data-role="button" data-icon="star" data-theme="e" data-back="true">Chart</a>            
+        </div>
+    </div>
+    <div data-role="content">
+        <div id="dynamicDatatableDIV" >            
+            <!--<table id="dynamicDatatable" class="tbl_basket_style"></table>-->
+        </div>
+    </div>
+</div>
+
+
+<div id="chartRules" data-role="dialog">
+    <div data-role="header">
+        <h1>Define Rules</h1>
+    </div>
+
+    <section data-role="content">
+        <div data-role="fieldcontain">
+            <label for="select-choice-ctype" class="select">Chart Type</label>            
+            <select name="select-choice-ctype" id="select-choice-ctype" data-native-menu="false">                                
+                <option value="line">Basic Line</option>                      
+                <option value="area">Basic Area</option>                
+                <option value="bar">Basic Bar</option>                
+                <option value="column">Basic Column</option>               
+                <option value="pie">Pie chart</option>                
+            </select>
+
+            <label for="select-choice-x" class="select">X-Axis</label>            
+            <select name="select-choice-x" id="select-choice-x" data-native-menu="false"></select>
+
+            <label for="select-choice-y" class="select">Y-Axis</label>
+            <select name="select-choice-y" id="select-choice-y" data-native-menu="false"></select>
+
+            <label for="select-choice-b" class="select">Series</label>
+            <select name="select-choice-b" id="select-choice-b" data-native-menu="false"></select>
+
+            <label for="select-choice-f" class="select">Series Filter</label>
+            <select name="select-choice-f" id="select-choice-f" multiple="multiple" data-native-menu="false"></select>
+
+        </div>  
+
+        <a href="#pageChart" data-role="button" data-icon="grid" data-theme="e" data-back="true">Show Chart</a>                                         
+
+    </section>
+
+</div>
+
+
+<div id="pageChart" data-role="page" data-add-back-btn="true" data-theme="b">
+    <header data-role="header" data-position="fixed">
+        <h1>Chart</h1>
+    </header>
+    <section data-role="content">
+        <div id="chartContainer" style="width: 100%; min-width: 400px; height: 100%; margin: 0 auto"></div>
+        <div id="myChart" ></div>        
+    </section>
+</div>
+
+
+<script type="text/javascript" src="js/highcharts/highcharts.js"></script>
+<script type="text/javascript" src="js/highcharts/modules/exporting.js"></script>
+<script type="text/javascript" src="js/highcharts/themes/gray.js"></script>
+
+</body>
+</html>
